@@ -4,7 +4,10 @@ library(imager)
 #"C:/Users/slate/Desktop/Anavitrinella_pampinaria_727.JPG"
 #"C:/Users/slate/Pictures/Anavitrinella_pampinaria_727 - Copy (2).JPG
 #"C:/Users/slate/Pictures/Cropped3.png"
-#CroppedXD.JPG
+#C:/Users/slate/Desktop/New folder/Scopula_limboundata_79.JPG<--good for block elimination
+#Iridopsis_ephyraria_73 - Copy.JPG<--ehhh
+#Eueretagrotis_sigmoides_629.JPG<--Best one
+#Acrobasis_indiginella_727-2.jpg<--bad one
 mothp <-load.image("C:/Users/slate/Desktop/Eueretagrotis_sigmoides_629.JPG")
 moths <- imresize(mothp,scale=0.5)
 
@@ -27,10 +30,12 @@ gmoth <- grayscale(moths, drop = TRUE)
 plot(gmoth, main="Greyscale of Moth") 
 
 #Step 2 Gaussian Blur <--I found a way to set in imager :)
-bmoth<-isoblur(gmoth,4,neumann = TRUE, gaussian = TRUE, na.rm = TRUE)
+#might as well turn all the options on <--could be something to play with tho!
+bmoth<-isoblur(gmoth,4,neumann = TRUE, gaussian = TRUE, na.rm = TRUE) 
 
 plot(bmoth, main="Blurred Moth") 
 
+#-------------------------------------------------
 #step 2.5 side quest!!!
 #I tried gradient magnitude by itself and it was thicker but more accurate
 #maybe overlapping could work?
@@ -42,17 +47,17 @@ plot(grad.mag,main="Gradient magnitude Side Quest")
 
 gmoth<-isoblur(grad.mag,2,neumann = TRUE, gaussian = TRUE, na.rm = FALSE)
 plot(gmoth,main="Gradient magnitude")
-
+#--------------------------------------------------
 #step 3 Uncanny
 Uncanny1 <- cannyEdges(bmoth, sigma=1.5)
 plot(Uncanny1, main="CannyEdges normal")
 
 Uncanny2 <- cannyEdges(gmoth, sigma=1)
 plot(Uncanny2, main="CannyEdges with gm")
-##NORMAL WINS!!!
 
-#step 4
-#ok lets plot it
+##NORMAL WINS!!!
+#--------------------------------------------
+#step 4 plot it
 coords <- which(Uncanny1, arr.ind = TRUE)
 wing_points2 <- data.frame(
   yy2=coords[,1], #this will be my y corrd/row
@@ -122,9 +127,9 @@ while(nrow(unvisited)>0){ #<--while there are still points in unvisited
       maybenot<- nearestpoint 
       unvisited<-unvisited[-nearestpoint,,drop=FALSE]}
 #Adding an if then statement to help me out :)
-#if it is a distance longer than 250 pixels, just get rid of it :)
+#if it is a distance longer than 150 pixels, just get rid of it :)
 #130 seems like the minimum from what I can tell
-#going to 150 cause it works and there is prolly variation
+  
   else{
   
   #PUT IT ALL TOGETHER!!
@@ -134,13 +139,61 @@ while(nrow(unvisited)>0){ #<--while there are still points in unvisited
     head(unvisited)#<just to make sure its good
 }}
 
+#plot that baby in colors and see what we got!
 ggplot(path,aes(x=x,y=y))+
   geom_path(color = "blue") +
-  theme_minimal()
+  ggtitle("Moth outline plotted on x and y axis")
+  
 
-#AHHHHH IT WORKSSS!!!!
+ggplot(path, aes(x=x,y=y))+
+  geom_polygon(fill="green")+
+  ggtitle("Awsome super cool moth fill")
+  
+  
+#AHHHHH IT WORKSSS!!
+#(don't try it with a different moth pic...its really bad)
 
-#TODO WHAT I NEED TO ADD
+
+# TO DO WHAT I NEED TO ADD
 #- Better edge detection to not get patterns in wings
-#- filling in the moth shape
+#- somehow eliminate the legs
+#- Smoothr 
+#- Raster
+
+#Ok so eliza gave a great suggestion to use smoother so lets see how it goesss
+#https://github.com/mstrimas/smoothr
+library(sf) #I think I want to convert to polygon...
+closedatpath<- rbind(path, path[1,])#needs to be all closed
+pol = st_sfc(st_polygon(list(as.matrix(closedatpath))))
+plot(pol) #ok yay that looks pretty cute
+
+polgeo <- st_sf(geometry = pol)
+nrow(polgeo)
+
+#idk what I am doing, we just trying stuff
+library(smoothr)
+#https://strimas.com/smoothr/reference/smooth.html
+# trying diffrent methods to find the best
+smooth_chaikin1 <- smooth(polgeo, method = "chaikin", refinements = 1)#<--I guess idk how this works cause they all look the same...
+smooth_chaikin2 <- smooth(polgeo, method = "chaikin", refinements = 3)
+smooth_chaikin3 <- smooth(polgeo, method = "chaikin", refinements = 10)
+#l_smooth_ksmooth <- smooth(polgeo, method = "ksmooth")
+#l_smooth_spline <- smooth(polgeo, method = "spline")
+
+  plot(st_geometry(polgeo), col = NA, border = "black",lwd = 3,lty = 2)
+  plot(st_geometry(smooth_chaikin1), col = NA, border = "red",lwd = 2,lty = 2,add = TRUE)
+  plot(st_geometry(smooth_chaikin2), col = NA, border = "blue",lwd = 2,lty = 2,add = TRUE)
+  plot(st_geometry(smooth_chaikin3), col = NA, border = "green",lwd = 2,lty = 2,add = TRUE)
+  #plot(st_geometry(l_smooth_ksmooth), col = NA, border = "blue",lwd = 2,lty = 2,add = TRUE)
+  #plot(st_geometry(l_smooth_spline), col = NA, border = "green",lwd = 2,lty = 2,add = TRUE)
+  
+  legend(
+  "topright",
+  legend = c("Original", "1","2","3"),
+  col = c("black", "red","blue","green"),
+  lwd = c(3, 2, 2, 2),
+  lty = 2,
+  bty = "n"
+)
+
 
