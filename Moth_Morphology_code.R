@@ -6,34 +6,42 @@
 library(imager)
 #Load images from github :)
 #---------------------------------------------------------------------------------------------------
-#Acrobasis_indiginella_727-2.jpg <--small                   ***
-#Acronicta_betulae_81.jpg <-- dark shadow & rect pattern    *Bad takes shadow
-#Acronicta_retardata_64.JPG <-- black and white details     *
-#Argyrotaenia_velutinana_79.jpg <-- small blurry but shiny  ***
-#Calledapteryx_dryoperata_616.JPG <-- detailed wing shape   **
-#Clepsis_persicana_615.JPG <--high contrast spots           *cuts out spots
-#Condylolomia_participalis_73-2.JPG <--high contrast lines  ***
-#Crambus_albellus_79.jpg<-- white low contrast              *too light only takes shadows
-#Donacaula_longirostrallus_69.JPG <-- long legs             **<--cuts legs suprisingly well
-#Euclea_delphinii_73.jpg <-- bright details                 ***
-#Eudonia_strigalis_79.jpg <-- small& blurry                 **<--shadow got caught (but usable)
-#Eueretagrotis_sigmoides_629.JPG <--dark gives nice contrast***
-#Iridopsis_ephyraria_73 - Copy.JPG<--light but good outline ***
-#Leuconycta_dipheroides_615-2.JPG<lots of details           ***
-#Leuconycta_dipheroides_628.JPG<--less bold details         ***
-#Meganola_minuscula_727.jpg <-- very grey                   ***
-#Pseudeustrotia_carneola_79.jpg<-- high contrast details    *<--caught the pattern (but usable)
-#Scopula_limboundata_79-2.jpg <--border low contrast        *<--top left was too light
-#Scopula_limboundata_79.JPG<-- objects in background        *<--not possible
+#1 Acrobasis_indiginella_727-2.jpg <--small                   ***
+#2 Acronicta_betulae_81.jpg <-- dark shadow & rect pattern    *Bad takes shadow
+#3 Acronicta_retardata_64.JPG <-- black and white details     *
+#4 Argyrotaenia_velutinana_79.jpg <-- small blurry but shiny  ***
+#5 Calledapteryx_dryoperata_616.JPG <-- detailed wing shape   **
+#6 Clepsis_persicana_615.JPG <--high contrast spots           *cuts out spots
+#7 Condylolomia_participalis_73-2.JPG <--high contrast lines  ***
+#8 Crambus_albellus_79.jpg<-- white low contrast              *too light only takes shadows
+#9 Donacaula_longirostrallus_69.JPG <-- long legs             **<--cuts legs suprisingly well (color scale may be issue)
+#10 Euclea_delphinii_73.jpg <-- bright details                 ***
+#11 Eudonia_strigalis_79.jpg <-- small& blurry                 **<--shadow got caught (but usable)
+#12 Eueretagrotis_sigmoides_629.JPG <--dark gives nice contrast***
+#13 Iridopsis_ephyraria_73 - Copy.JPG<--light but good outline ***
+#14 Leuconycta_dipheroides_615-2.JPG<--lots of details         ***
+#15 Leuconycta_dipheroides_628.JPG<--less bold details         ***
+#16 Meganola_minuscula_727.jpg <-- very grey                   ***
+#17 Pseudeustrotia_carneola_79.jpg<-- high contrast details    *<--caught the pattern (but usable)
+#18 Scopula_limboundata_79-2.jpg <--border low contrast        *<--top left was too light
+#19 Scopula_limboundata_79.JPG<-- objects in background        *<--not possible
+#20 Olethreutes_permundana_73-2.JPG<-- high contrast details   ***
+#21 Polygrammate_hebraeicum_79.JPG<-- hight contrast details   *<--too much contrast (diffrent color background could have fixed it)
+#22 Lophocampa_caryae_616.JPG<--very detailed, big shadow      *<--shadow got caught
+#23 Spilosoma_virginica_527.jpg<-- fully white                 *<--not enough contrast (diffrent background could have helped)
+#24 Urola_nivalis_79.jpg<--white small shiny                   *
+#25 Spilonota_ocellana_710.jpg<--dark small                    **
 #---------------------------------------------------------------------------------------------------
 #You have to get the RAW url <--the other one will not work
 #seems like smaller moths are more likley to be picked up, they normally have less detail
-moth<- load.image("https://raw.githubusercontent.com/JenniferSlater/Moth-Outline-and-shape-detection/main/Moth%20Images/Acrobasis_indiginella_727-2.jpg")
+moth<- load.image("https://raw.githubusercontent.com/JenniferSlater/Moth-Outline-and-shape-detection/main/Moth%20Images/Polygrammate_hebraeicum_79.JPG")
 plot(moth,main="Moth Image") 
+                                                                                                           #just change the number to the one that corresponds to moth
+colorscale <- load.image("https://raw.githubusercontent.com/JenniferSlater/Moth-Outline-and-shape-detection/main/ColorBars/21_mothcolorscale.jpg")
+plot(colorscale,main="Color Scale") 
 
 #Step 1: from Canny edge detection (turn to greyscale)
-#https://justin-liang.com/tutorials/canny/ 
-gmoth <- grayscale(moth)
+#https://justin-liang.com/tutorials/canny/ gmoth <- grayscale(moth)
 plot(gmoth, main="Greyscale of Moth")
 
 #If you get an error on this stage try looking at the dimensions with
@@ -140,11 +148,12 @@ ggplot(closedatpath, aes(x=closedatpath[,1],y=closedatpath[,2]))+
 ##                             moth_width_cm, moth_height_cm))#<suprisingly helpful to visualize
 
 # I should look at ratio's to
-#Diamond
 #triangle
 #rectangle
 #square
 #oval
+
+
 
 
 
